@@ -1,0 +1,139 @@
+/* Ruby Flow 可視化の画面レイアウト（IDE と教育用図解の中間。余白と細線を主にする） */
+:root {
+  --ink: #1f2328; --muted: #59636e; --line: #d8dde3; --bg: #fbfbfa; --panel: #ffffff;
+  --browser: #2f6fdd; --ruby: #cc342d; --db: #248454; --erb: #c47c00; --html: #5b6b7f;
+  --focus: #f0b429; --error: #c41e1e;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Hiragino Kaku Gothic ProN", monospace;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body { font-family: system-ui, -apple-system, "Hiragino Sans", "Noto Sans JP", sans-serif; color: var(--ink); background: var(--bg); font-size: 14px; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 1px; }
+
+.app {
+  display: grid; height: 100vh;
+  grid-template-columns: 250px minmax(0, 1fr) 420px;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  grid-template-areas: "top top top" "left center right" "foot foot foot";
+}
+.app.hide-left { grid-template-columns: 0 minmax(0, 1fr) 420px; }
+.app.hide-right { grid-template-columns: 250px minmax(0, 1fr) 0; }
+.app.hide-left.hide-right { grid-template-columns: 0 minmax(0, 1fr) 0; }
+.app.hide-left .left, .app.hide-right .right { display: none; }
+
+.topbar { grid-area: top; display: flex; flex-wrap: wrap; gap: 6px 20px; align-items: center; padding: 8px 14px; border-bottom: 1px solid var(--line); background: var(--panel); }
+.brand { display: flex; align-items: baseline; gap: 10px; }
+.brand h1 { margin: 0; font-size: 18px; color: var(--ruby); }
+.tagline { margin: 0; color: var(--muted); font-size: 12px; }
+.env { display: flex; gap: 14px; margin: 0; font-size: 12px; }
+.env div { display: flex; gap: 4px; }
+.env dt { color: var(--muted); }
+.env dd { margin: 0; font-family: var(--mono); }
+.boot { margin: 0; font-size: 12px; color: var(--muted); }
+.app[data-boot="error"] .boot { color: #fff; background: var(--error); padding: 2px 8px; border-radius: 4px; }
+.status { margin: 0; font-size: 12px; padding: 2px 8px; border-radius: 4px; border: 1px solid var(--line); }
+.app[data-connection="ok"] .status { border-color: #b7dfc8; }
+.app[data-connection="error"] .status { color: #fff; background: var(--error); border-color: var(--error); }
+.panel-toggles { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+.ghost { background: none; border: 1px solid var(--line); border-radius: 4px; padding: 2px 8px; cursor: pointer; }
+.app-link { font-size: 13px; color: var(--browser); }
+
+.left { grid-area: left; overflow: auto; border-right: 1px solid var(--line); background: var(--panel); padding: 8px 10px; }
+.left h2, .right h3 { font-size: 13px; margin: 10px 0 6px; }
+.hint { font-weight: normal; color: var(--muted); font-size: 11px; }
+.req-list, .file-list, .event-list { list-style: none; margin: 0; padding: 0; }
+.req { width: 100%; text-align: left; display: flex; flex-wrap: wrap; gap: 2px 6px; align-items: center; padding: 6px 6px; margin-bottom: 3px; border: 1px solid transparent; border-radius: 4px; background: none; cursor: pointer; }
+.req:hover { background: #f3f5f7; }
+.req.selected { border-color: var(--ink); background: #f3f5f7; }
+.req.error { box-shadow: inset 3px 0 0 var(--error); }
+.req .rel { color: var(--muted); }
+.req .m { font-family: var(--mono); font-size: 11px; font-weight: 700; padding: 0 4px; border-radius: 3px; border: 1px solid currentColor; }
+.m-get { color: var(--browser); } .m-post { color: var(--ruby); }
+.req .p { flex: 1; min-width: 0; font-family: var(--mono); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.req .s { font-family: var(--mono); font-size: 12px; }
+.s2 { color: var(--db); } .s3 { color: var(--browser); } .s4, .s5 { color: var(--error); font-weight: 700; }
+.req .d { flex-basis: 100%; padding-left: 4px; font-size: 11px; color: var(--muted); }
+.flag { font-size: 10px; border: 1px solid var(--error); color: var(--error); border-radius: 3px; padding: 0 3px; margin-left: 4px; }
+.file { display: block; width: 100%; text-align: left; font-family: var(--mono); font-size: 12px; padding: 3px 6px; border: 0; background: none; border-left: 3px solid transparent; cursor: pointer; }
+.file.current { border-left-color: var(--ink); background: #f3f5f7; font-weight: 700; }
+.k-ruby { color: var(--ruby); } .k-erb { color: var(--erb); } .k-db { color: var(--db); cursor: default; }
+
+.center { grid-area: center; display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+.canvas-host { flex: 1; min-height: 360px; position: relative; overflow: hidden; }
+.canvas-host canvas { display: block; position: absolute; top: 0; left: 0; }
+.step { margin: 0; padding: 4px 12px; font-family: var(--mono); font-size: 12px; border-top: 1px solid var(--line); background: var(--panel); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.controls { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; padding: 8px 12px; border-top: 1px solid var(--line); background: var(--panel); }
+.controls button { padding: 4px 10px; border: 1px solid var(--line); border-radius: 4px; background: #fff; cursor: pointer; }
+.controls button:hover { border-color: var(--muted); }
+.controls button[aria-pressed="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
+.controls .primary { min-width: 110px; font-weight: 700; }
+.controls .sep { width: 1px; height: 20px; background: var(--line); margin: 0 4px; }
+.controls .label { color: var(--muted); font-size: 12px; }
+.speeds { display: inline-flex; gap: 2px; }
+
+.right { grid-area: right; display: flex; flex-direction: column; min-height: 0; border-left: 1px solid var(--line); background: var(--panel); }
+.tabs { display: flex; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+.tabs button { flex: 1; padding: 8px 4px; border: 0; border-bottom: 3px solid transparent; background: none; cursor: pointer; font-size: 13px; }
+.tabs button[aria-selected="true"] { border-bottom-color: var(--ink); font-weight: 700; }
+.panel { display: none; overflow: auto; padding: 8px 10px; flex: 1; min-height: 0; }
+.panel[data-active="true"] { display: block; }
+.empty-note { color: var(--muted); padding: 12px; border: 1px dashed var(--line); border-radius: 6px; }
+.caption { color: var(--muted); font-size: 12px; margin: 4px 0 8px; }
+.code-head { font-size: 12px; padding: 4px 0 6px; }
+.code-head .note { color: var(--muted); margin-left: 6px; }
+ol.code { list-style: none; margin: 0; padding: 0; font-family: var(--mono); font-size: 12px; line-height: 1.55; }
+ol.code li { display: flex; white-space: pre; border-left: 3px solid transparent; }
+ol.code .ln { width: 3em; text-align: right; padding-right: 10px; color: #9aa4ae; user-select: none; flex: none; }
+ol.code li.visited { background: #fff6f5; }
+ol.code li.current { background: #fde2df; border-left-color: var(--ruby); font-weight: 700; }
+table { border-collapse: collapse; width: 100%; font-size: 12px; }
+th, td { border-bottom: 1px solid var(--line); padding: 4px 5px; text-align: left; vertical-align: top; }
+td code, th code { font-family: var(--mono); overflow-wrap: anywhere; }
+.vars .type, .trail .type, .erb-expr .type { color: var(--muted); font-family: var(--mono); font-size: 11px; }
+.vars .where, .trail .loc, .erb-expr .loc { color: var(--muted); font-size: 11px; font-family: var(--mono); }
+.vars td { font-family: var(--mono); overflow-wrap: anywhere; }
+.vars tr.changed { background: #fff4d6; }
+.prev { color: var(--muted); font-size: 11px; }
+.trail { padding-left: 20px; margin: 0; }
+.trail li { margin: 3px 0; overflow-wrap: anywhere; }
+.trail .where { font-weight: 600; }
+.sql tr.current, .erb-expr.current, .erb-block.current, .erb-end.current { background: #e3f3ea; outline: 1px solid var(--db); }
+.sql tr.internal { color: #8a939c; }
+.sql tr.future, .future { opacity: .45; }
+.num { text-align: right; font-family: var(--mono); }
+.op { font-family: var(--mono); font-weight: 700; }
+.op-insert, .op-update, .op-delete { color: var(--ruby); } .op-select { color: var(--browser); } .op-commit { color: var(--db); } .op-rollback { color: var(--error); }
+.rows tr.commit td:first-child { color: var(--db); font-weight: 700; }
+.rows tr.rollback td:first-child { color: var(--error); font-weight: 700; }
+.erb-block, .erb-expr, .erb-end { padding: 6px; border-bottom: 1px solid var(--line); overflow-wrap: anywhere; }
+.erb-block h3 { margin: 0 0 4px; }
+.erb-block ul { margin: 0; padding-left: 18px; }
+.erb-expr code.html { background: #f3f5f7; padding: 0 3px; }
+.resp { font-weight: 600; }
+.ev { width: 100%; text-align: left; display: grid; grid-template-columns: 3em 7.5em 8em 1fr; gap: 4px; border: 0; background: none; padding: 3px 2px; font-size: 12px; cursor: pointer; border-left: 3px solid transparent; }
+.ev:hover { background: #f3f5f7; }
+.ev.current { background: #fff4d6; border-left-color: var(--ink); font-weight: 700; }
+.ev.internal { color: #8a939c; }
+.ev .seq, .ev .loc { font-family: var(--mono); color: var(--muted); }
+.ev .sum { overflow-wrap: anywhere; }
+.t-ruby-raise .ty, .t-trace-drop .ty { color: var(--error); font-weight: 700; }
+.t-sql-query .ty, .t-db-snapshot .ty { color: var(--db); }
+.t-erb-start .ty, .t-erb-expression .ty, .t-erb-end .ty { color: var(--erb); }
+.t-request-start .ty, .t-request-end .ty, .t-response-html .ty, .t-response-redirect .ty { color: var(--browser); }
+.foot { grid-area: foot; font-size: 11px; color: var(--muted); padding: 4px 14px; border-top: 1px solid var(--line); background: var(--panel); }
+
+/* 縮小時はパネルを縦に並べる */
+@media (max-width: 1100px) {
+  .app { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto minmax(420px, 1fr) auto auto; grid-template-areas: "top" "left" "center" "right" "foot"; height: auto; min-height: 100vh; }
+  .app.hide-left, .app.hide-right, .app.hide-left.hide-right { grid-template-columns: minmax(0, 1fr); }
+  .left { max-height: 220px; border-right: 0; border-bottom: 1px solid var(--line); }
+  .right { min-height: 360px; border-left: 0; border-top: 1px solid var(--line); }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { scroll-behavior: auto !important; transition: none !important; }
+}
+.vars th, .vars .type, .vars .where { white-space: nowrap; }
+.vars .where { font-size: 10px; }
+.ev { grid-template-columns: 3em 7em minmax(0, 9em) minmax(0, 1fr); }
+.ev .loc, .ev .ty { overflow-wrap: anywhere; }

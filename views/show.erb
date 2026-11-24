@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>投稿の詳細 | Ruby Flow デモ</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <h1><%= flow_h(:title, @post.title) %></h1>
+    <nav><a href="/">← 一覧へ戻る</a></nav>
+  </header>
+  <main>
+    <article class="post-body"><%= flow_h(:body, @post.body) %></article>
+    <p class="meta">ID: <%= h @post.id %> ／ 更新: <%= h @post.updated_at.strftime('%Y-%m-%d %H:%M:%S') %></p>
+    <div class="actions">
+      <a class="button" href="/posts/<%= h @post.id %>/edit">編集</a>
+      <form method="post" action="/posts/<%= h @post.id %>/delete">
+        <button type="submit" class="danger">削除</button>
+      </form>
+    </div>
+  </main>
+</body>
+</html>

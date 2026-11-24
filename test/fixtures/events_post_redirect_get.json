@@ -1,0 +1,26 @@
+{
+  "_comment": "TEST FIXTURE ONLY - 手書きのテスト用データ。実測値ではない",
+  "schema_version": 1,
+  "server_id": "fixture-server",
+  "next_cursor": 16,
+  "oldest_cursor": 1,
+  "gap": false,
+  "events": [
+    {"seq":1,"request_id":"11111111-1111-4111-8111-111111111111","type":"request.start","time_ms":1.0,"file":null,"line":null,"payload":{"method":"POST","path":"/posts","params":{"visible":{"title":{"type":"String","value":" Hi "}},"hidden_keys":[]}}},
+    {"seq":2,"request_id":"11111111-1111-4111-8111-111111111111","type":"ruby.call","time_ms":1.1,"file":"app.rb","line":25,"payload":{"method":"POST /posts","args":{}}},
+    {"seq":3,"request_id":"11111111-1111-4111-8111-111111111111","type":"ruby.line","time_ms":1.2,"file":"app.rb","line":26,"payload":{"method":"POST /posts","vars":[{"name":"title","scope":"local","type":"NilClass","value":null}]}},
+    {"seq":4,"request_id":"11111111-1111-4111-8111-111111111111","type":"ruby.line","time_ms":1.3,"file":"app.rb","line":29,"payload":{"method":"POST /posts","vars":[{"name":"title","scope":"local","type":"String","value":" Hi "}]}},
+    {"seq":5,"request_id":"11111111-1111-4111-8111-111111111111","type":"ruby.call","time_ms":1.4,"file":"models.rb","line":31,"payload":{"method":"Post#normalize_fields","args":{}}},
+    {"seq":6,"request_id":"11111111-1111-4111-8111-111111111111","type":"ruby.return","time_ms":1.5,"file":"models.rb","line":34,"payload":{"method":"Post#normalize_fields","return":{"type":"String","value":""},"vars":[{"name":"self","scope":"self","type":"Post","value":{"__type":"Post","id":null,"title":"Hi","persisted":false}}]}},
+    {"seq":7,"request_id":"11111111-1111-4111-8111-111111111111","type":"sql.query","time_ms":1.6,"file":"app.rb","line":29,"payload":{"operation":"SELECT","table":"pg_attribute","kind":"schema","duration_ms":0.3}},
+    {"seq":8,"request_id":"11111111-1111-4111-8111-111111111111","type":"sql.query","time_ms":1.7,"file":"app.rb","line":29,"payload":{"operation":"INSERT","table":"posts","kind":"query","duration_ms":0.4,"statement":"INSERT INTO \"posts\" (\"title\") VALUES ($1) RETURNING \"id\""}},
+    {"seq":9,"request_id":"11111111-1111-4111-8111-111111111111","type":"db.snapshot","time_ms":1.8,"file":"app.rb","line":29,"payload":{"table":"posts","action":"insert","committed":true,"row":{"__type":"Post","id":7,"title":"Hi"}}},
+    {"seq":10,"request_id":"11111111-1111-4111-8111-111111111111","type":"response.redirect","time_ms":1.9,"file":null,"line":null,"payload":{"status":302,"location":"/posts/7"}},
+    {"seq":11,"request_id":"11111111-1111-4111-8111-111111111111","type":"request.end","time_ms":2.0,"file":null,"line":null,"payload":{"status":302,"duration_ms":1.0}},
+    {"seq":12,"request_id":"22222222-2222-4222-8222-222222222222","related_request_id":"11111111-1111-4111-8111-111111111111","type":"request.start","time_ms":3.0,"file":null,"line":null,"payload":{"method":"GET","path":"/posts/7","params":{"visible":{},"hidden_keys":[]}}},
+    {"seq":13,"request_id":"22222222-2222-4222-8222-222222222222","type":"erb.start","time_ms":3.1,"file":"views/show.erb","line":null,"payload":{"template":"show","assigns":[{"name":"@post","type":"Post","value":{"__type":"Post","id":7,"title":"<b>Hi</b>"}}]}},
+    {"seq":14,"request_id":"22222222-2222-4222-8222-222222222222","type":"erb.expression","time_ms":3.2,"file":"views/show.erb","line":11,"payload":{"label":"title","type":"String","value":"<b>Hi</b>","html":"&lt;b&gt;Hi&lt;&#x2F;b&gt;","escaped":true}},
+    {"seq":15,"request_id":"22222222-2222-4222-8222-222222222222","type":"erb.end","time_ms":3.3,"file":"views/show.erb","line":null,"payload":{"template":"show","html_bytes":700}},
+    {"seq":16,"request_id":"22222222-2222-4222-8222-222222222222","type":"response.html","time_ms":3.4,"file":null,"line":null,"payload":{"status":200,"bytes":700}}
+  ]
+}

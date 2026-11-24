@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ruby Flow — Rubyの裏側を、Rubyで描く。</title>
+  <link rel="stylesheet" href="visualizer.css">
+  <!-- すべてローカルに固定した配布物（外部 CDN へはアクセスしない）。版とライセンスは docs/DEPENDENCIES.md -->
+  <script src="vendor/p5/p5.min.js"></script>
+  <script src="vendor/ruby-wasm/browser.umd.js"></script>
+  <script src="boot.js" defer></script>
+</head>
+<body>
+  <div id="app-root" class="app" data-boot="loading" data-connection="connecting">
+    <header class="topbar">
+      <div class="brand">
+        <h1>Ruby Flow</h1>
+        <p class="tagline">Rubyの裏側を、Rubyで描く。</p>
+      </div>
+      <dl class="env">
+        <div><dt>ブラウザ側 Ruby</dt><dd id="wasm-ruby-version">起動中…</dd></div>
+        <div><dt>サーバー側 Ruby</dt><dd id="server-ruby-version">取得中…</dd></div>
+      </dl>
+      <p class="boot" id="boot-status" role="status">読み込み中…</p>
+      <p class="status" id="status-text" role="status" aria-live="polite">接続待ち…</p>
+      <div class="panel-toggles">
+        <button type="button" class="ghost" id="toggle-left" aria-controls="left" aria-expanded="true" onclick="this.closest('.app').classList.toggle('hide-left'); this.setAttribute('aria-expanded', !this.closest('.app').classList.contains('hide-left'))">左パネル</button>
+        <button type="button" class="ghost" id="toggle-right" aria-controls="right" aria-expanded="true" onclick="this.closest('.app').classList.toggle('hide-right'); this.setAttribute('aria-expanded', !this.closest('.app').classList.contains('hide-right'))">右パネル</button>
+        <a class="app-link" href="/" target="ruby-flow-app" rel="noopener">対象アプリを開く ↗</a>
+      </div>
+    </header>
+
+    <nav id="left" class="left" aria-label="リクエストとファイル">
+      <section>
+        <h2>リクエスト履歴 <span class="hint">新しい順 ／ ↑↓ で移動</span></h2>
+        <div id="request-list"><p class="empty-note">接続待ち…</p></div>
+      </section>
+      <section>
+        <h2>ファイル</h2>
+        <div id="file-list"></div>
+      </section>
+    </nav>
+
+    <main class="center" aria-label="処理の流れ（p5.rb で描画）">
+      <div id="canvas-host" class="canvas-host"></div>
+      <p class="step" id="step-text" aria-live="polite">ステップなし</p>
+      <div class="controls" role="toolbar" aria-label="再生操作">
+        <button type="button" data-cmd="reset" title="最初へ (R)">⏮ 最初へ</button>
+        <button type="button" data-cmd="step_back" title="前のステップ (←)">◀ 前へ</button>
+        <button type="button" id="btn-play" class="primary" data-cmd="toggle" aria-pressed="false" title="再生/一時停止 (Space)">▶ 再生</button>
+        <button type="button" data-cmd="step_forward" title="次のステップ (→)">次へ ▶</button>
+        <span class="sep" aria-hidden="true"></span>
+        <span class="label" id="speed-label">速度</span>
+        <span role="group" aria-labelledby="speed-label" class="speeds">
+          <button type="button" id="speed-0_5" data-cmd="speed" data-arg="0.5" aria-pressed="false" title="(1)">×0.5</button>
+          <button type="button" id="speed-1_0" data-cmd="speed" data-arg="1.0" aria-pressed="true" title="(2)">×1</button>
+          <button type="button" id="speed-2_0" data-cmd="speed" data-arg="2.0" aria-pressed="false" title="(3)">×2</button>
+        </span>
+        <span class="sep" aria-hidden="true"></span>
+        <button type="button" id="btn-live" data-cmd="live" aria-pressed="true" title="新しいリクエストを自動で追う (L)">ライブ追従</button>
+        <button type="button" id="btn-internal" data-cmd="internal" aria-pressed="false" title="スキーマ取得などの内部SQLもアニメーションに含める">内部SQLも表示</button>
+        <button type="button" id="btn-motion" data-cmd="motion" aria-pressed="false" title="点の移動アニメーションを省略">動きを減らす</button>
+      </div>
+    </main>
+
+    <aside id="right" class="right" aria-label="詳細">
+      <div class="tabs" role="tablist" aria-label="詳細の表示">
+        <button type="button" role="tab" id="tab-code" aria-controls="panel-code" aria-selected="true" data-cmd="tab" data-arg="code">コード</button>
+        <button type="button" role="tab" id="tab-vars" aria-controls="panel-vars" aria-selected="false" data-cmd="tab" data-arg="vars">変数・データ</button>
+        <button type="button" role="tab" id="tab-db" aria-controls="panel-db" aria-selected="false" data-cmd="tab" data-arg="db">DB</button>
+        <button type="button" role="tab" id="tab-html" aria-controls="panel-html" aria-selected="false" data-cmd="tab" data-arg="html">ERB・HTML</button>
+        <button type="button" role="tab" id="tab-events" aria-controls="panel-events" aria-selected="false" data-cmd="tab" data-arg="events">イベント一覧</button>
+      </div>
+      <section id="panel-code" class="panel" role="tabpanel" aria-labelledby="tab-code" data-active="true"></section>
+      <section id="panel-vars" class="panel" role="tabpanel" aria-labelledby="tab-vars" data-active="false"></section>
+      <section id="panel-db" class="panel" role="tabpanel" aria-labelledby="tab-db" data-active="false"></section>
+      <section id="panel-html" class="panel" role="tabpanel" aria-labelledby="tab-html" data-active="false"></section>
+      <section id="panel-events" class="panel" role="tabpanel" aria-labelledby="tab-events" data-active="false"></section>
+    </aside>
+
+    <footer class="foot">
+      キー操作: Space 再生/停止 ・ ←/→ ステップ ・ ↑/↓ リクエスト ・ R 最初へ ・ 1/2/3 速度 ・ L ライブ追従
+      ／ 値・行番号・SQL種別・時間はすべてサーバーでの実測イベントです（点の移動のみ説明用の補間）。
+    </footer>
+  </div>
+</body>
+</html>

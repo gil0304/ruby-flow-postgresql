@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>投稿一覧 | Ruby Flow デモ</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <h1>投稿一覧</h1>
+    <nav>
+      <a class="button" href="/posts/new">新しい投稿</a>
+      <a class="flow-link" href="/visualizer/index.html" target="ruby-flow" rel="noopener">Ruby Flow で処理を見る ↗</a>
+    </nav>
+  </header>
+  <main>
+    <p class="count">全 <%= flow_h(:count, @posts.size) %> 件（新しい順・最大50件）</p>
+    <% if @posts.empty? %>
+      <p class="empty">まだ投稿がありません。「新しい投稿」から作成してください。</p>
+    <% else %>
+      <ul class="posts">
+        <% @posts.each do |post| %>
+          <li class="post">
+            <a class="post-title" href="/posts/<%= h post.id %>"><%= flow_h(:title, post.title) %></a>
+            <p class="post-summary"><%= h post.summary %></p>
+            <div class="actions">
+              <a href="/posts/<%= h post.id %>/edit">編集</a>
+              <form method="post" action="/posts/<%= h post.id %>/delete">
+                <button type="submit" class="danger">削除</button>
+              </form>
+            </div>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
+  </main>
+</body>
+</html>

@@ -1,0 +1,15 @@
+.ruby-version
+docker-compose.yml
+memo.md
+.vscode
+
+# ---- Ruby Flow（原本に追記）----
+# 接続設定は公開しない（CLAUDE.md: config/database.yml の内容を外部へ出さない）
+config/database.yml
+config.yml
+.env
+.env.*
+.claude/settings.local.json
+.DS_Store
+*.log
+tmp/
