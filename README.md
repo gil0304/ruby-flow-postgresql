@@ -22,6 +22,9 @@ ruby -v            # ruby 3.4.1
 bundle install
 ```
 
+> **公開リポジトリについて**: 接続設定 `config/database.yml` は公開していません（`.gitignore` で除外）。
+> クローンした場合は下の **A（`DATABASE_URL` で専用DBを指定）** で動かせます。設定ファイルを使いたい場合は各自で `config/database.yml` を用意してください。
+
 ### データベースの準備（重要）
 `config/database.yml`（原本）は **変更しません**。
 このリポジトリでの検証時、原本の設定が指す DB はサーバー上に未作成でした（`NoDatabaseError`）。次のどちらかで準備します。
